@@ -1,0 +1,34 @@
+name: Build Nukkit
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        submodules: true
+
+    - name: Set up JDK 8
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: 8
+
+    - name: Initialize and update submodules
+      run: git submodule update --init
+
+    - name: Clean project
+      run: mvn clean
+
+    - name: Build package
+      run: mvn package
+
+    - name: Archive JAR file
+      uses: actions/upload-artifact@v3
+      with:
+        name: nukkit
+        path: target/*.jar
